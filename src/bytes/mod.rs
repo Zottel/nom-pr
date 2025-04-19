@@ -799,7 +799,7 @@ where
         Err(Err::Error(_)) => {
           // unwrap() should be safe here since index < $i.input_len()
           if i.iter_elements().next().unwrap().as_char() == self.control_char {
-            let next = self.control_char.len_utf8();
+            let next = 1;
             if next >= i.input_len() {
               if OM::Incomplete::is_streaming() {
                 return Err(Err::Incomplete(Needed::new(1)));
@@ -980,7 +980,7 @@ where
         Err(Err::Error(_)) => {
           // unwrap() should be safe here since index < $i.input_len()
           if remainder.iter_elements().next().unwrap().as_char() == self.control_char {
-            let next = index + self.control_char.len_utf8();
+            let next = index + 1;
             let input_len = input.input_len();
 
             if next >= input_len {
