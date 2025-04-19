@@ -269,3 +269,23 @@ fn issue_1586_parser_iterator_impl() {
 
   assert_eq!(parse_input("123\n456").collect::<Vec<_>>(), vec![123, 456]);
 }
+
+#[test]
+fn test_byte_escaped_transform() {
+
+    // [ESC] is represented as [ESC, ESC_ESC] when escaped.
+    const ESC : u8 = 255;
+    const S_ESC : &[u8] = &[ESC];
+    const ESC_ESC : u8 = 254;
+    const S_ESC_ESC : &[u8] = &[ESC_ESC];
+
+    let test_vector : Vec<u8> = vec![1, ESC, ESC_ESC, 3];
+
+    let res : IResult<&[u8], Vec<u8>> = nom::bytes::complete::escaped_transform(
+        nom::bytes::complete::is_not(S_ESC),
+        ESC.into(),
+        nom::combinator::value(S_ESC, nom::bytes::complete::tag(S_ESC_ESC))
+    ).parse_complete(&test_vector[..]);
+    assert_eq!(Ok((&[][..], vec![1,ESC, 3])), res);
+}
+
